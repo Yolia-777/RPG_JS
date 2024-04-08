@@ -30,6 +30,8 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@rpgjs/common": "^4.3.0"
+    "@rpgjs/common": "^4.3.0",
+    "@rpgjs/tiled": "^4.3.0",
+    "simple-room-client": "^3.0.1"
   }
 }

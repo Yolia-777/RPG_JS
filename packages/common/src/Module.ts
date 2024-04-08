@@ -1,6 +1,6 @@
-import { RpgPlugin, HookServer, HookClient } from './Plugin'
-import { isArray, isClass, isFunction, isPromise } from './Utils'
 import { warning } from './Logger'
+import { HookClient, HookServer, RpgPlugin } from './Plugin'
+import { isArray, isClass, isFunction, isPromise } from './Utils'
 
 enum Side {
     Server = 'server',
@@ -28,10 +28,11 @@ export function RpgModule<T>(options: T) {
     }
 }
 
-export async function loadModules(modules, obj, middleware?: Function): Promise<{ playerProps: any }> {
+export async function loadModules(modules, obj, middleware?: Function): Promise<{ playerProps: any, scenes: any }> {
     const { side, relations } = obj
     let playerProps = {}
     let hooks = {}
+    let _scenes = {}
 
     const getModuleClass = (module) => {
         if (!module) return null
@@ -135,10 +136,14 @@ export async function loadModules(modules, obj, middleware?: Function): Promise<
         }
         loadRelations(engine, 'engine')
         if (scalability) loadRelations(scalability._hooks, 'scalability')
-        if (scenes) loadRelations(scenes.map, 'sceneMap')
+        if (scenes) {
+            loadRelations(scenes.map, 'sceneMap')
+            _scenes = Object.assign(_scenes, scenes)
+        }
     }
 
     return {
-        playerProps
+        playerProps,
+        scenes: _scenes
     }
 }
