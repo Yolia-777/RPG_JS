@@ -1,12 +1,5 @@
 modules = [
-    './main',
-    './plugin',
-    '@rpgjs/default-gui',
-    '@rpgjs/plugin-emotion-bubbles',
-    '@rpgjs/gamepad',
-   # '@rpgjs/mobile-gui'
-   # '@rpgjs/chat',
-   # '@rpgjs/title-screen'
+    './main'
 ]
 
 spritesheetDirectories = []

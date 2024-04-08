@@ -1,5 +1,4 @@
 import { InjectContext, HookClient, loadModules, ModuleType } from '@rpgjs/common'
-import { GameEngineClient } from './GameEngine'
 import { RpgClientEngine } from './RpgClientEngine'
 import { setInject } from './inject'
 

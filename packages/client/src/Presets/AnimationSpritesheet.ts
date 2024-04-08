@@ -1,5 +1,12 @@
 import { Direction } from '@rpgjs/common'
-import { Animation } from '../Effects/AnimationCharacter'
+
+export enum Animation {
+    Stand = 'stand',
+    Walk = 'walk',
+    Attack = 'attack',
+    Defense = 'defense',
+    Skill = 'skill'
+}
 
 export const RMSpritesheet = (framesWidth: number, framesHeight: number, frameStand: number = 1) => {
 
