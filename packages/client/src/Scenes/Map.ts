@@ -1,11 +1,15 @@
 import { TiledMap as Map } from "@rpgjs/tiled";
-import { Signal, TiledMap, h } from "canvasengine";
+import { Signal, TiledMap, h, loop } from "canvasengine";
+import { CharacterComponent } from "../Components/Character";
+import { GameEngineClient } from "../GameEngine";
 import { RpgRenderer } from "../Renderer";
 import { inject } from "../inject";
 
 export function SceneMap(props: Signal<Map>) {
   const { height, tileheight, width, tilewidth } = props();
   const renderer = inject(RpgRenderer);
+  const game = inject(GameEngineClient);
+
 
   // TODO: Waiting Viewport to be implemented.
   /*return h(
@@ -23,6 +27,10 @@ export function SceneMap(props: Signal<Map>) {
   );*/
   return h(TiledMap, {
     map: props,
-    objectLayer: (layer) => {},
+    objectLayer: (layer) => {
+      return loop(game.objects, (object, index) => {
+        return h(CharacterComponent, object)
+      })
+    },
   });
 }

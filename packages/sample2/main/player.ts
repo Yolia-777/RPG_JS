@@ -1,12 +1,10 @@
-import { RpgMap } from '@rpgjs/server';
-import { Speed } from '@rpgjs/server';
-import { RpgPlayer, RpgPlayerHooks, Control, Components, RpgEvent, EventData } from '@rpgjs/server'
-import Potion from './database/items/Potion';
+import { Components, Move, RpgPlayer, RpgPlayerHooks } from '@rpgjs/server';
 
 const player: RpgPlayerHooks = {
     onConnected(player: RpgPlayer) {
         player.name = 'YourName'
         player.setComponentsTop(Components.text('{position.x},{position.y}'))
+        
     },
     onInput(player: RpgPlayer, { input }) {
         const map = player.getCurrentMap()
@@ -23,12 +21,11 @@ const player: RpgPlayerHooks = {
            player.callMainMenu()
         }
     },
-    async onJoinMap(player: RpgPlayer) {
+    async onJoinMap(player: RpgPlayer, map) {
         player.gui('test').open();
-
-        setTimeout(() => {
-            player.addItem(Potion, 1);
-        }, 5000);
+        const event = map.getEventByName('EV-1') as any
+        event.speed = 1
+        event.infiniteMoveRoute([Move.tileRandom()])
     }
 }
 
