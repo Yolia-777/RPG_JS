@@ -1,8 +1,8 @@
-import { RpgCommonGame, HookServer, loadModules, ModuleType, GameSide, RpgPlugin, InjectContext } from '@rpgjs/common'
-import { RpgServerEngine } from './server'
-import { RpgPlayer } from './Player/Player'
+import { GameSide, HookServer, InjectContext, ModuleType, RpgCommonGame, RpgPlugin, loadModules } from '@rpgjs/common'
 import { RpgMatchMaker } from './MatchMaker'
+import { RpgPlayer } from './Player/Player'
 import { inject, setInject } from './inject'
+import { RpgServerEngine } from './server'
 
 interface RpgServerEntryPointOptions {
     /** 
@@ -34,7 +34,7 @@ interface RpgServerEntryPointOptions {
    * */
     globalConfig?: any
 
-    workers?: any
+    Worker: any
 
     envs?: object
 }
@@ -43,7 +43,7 @@ export default async function (modules: ModuleType[], options: RpgServerEntryPoi
     const context = new InjectContext()
     setInject(context)
 
-    inject(RpgCommonGame, [GameSide.Server])
+    inject(RpgCommonGame, [GameSide.Server, options.Worker])
 
     if (!options.globalConfig) options.globalConfig = {}
 

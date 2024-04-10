@@ -1,14 +1,14 @@
+import { ModuleType } from '@rpgjs/common'
+import cors from 'cors'
+import express from 'express'
 import http from 'http'
 import path from 'path'
-import express from 'express'
-import cors from 'cors'
-import { Server } from 'socket.io'
-import entryPoint from '../entry-point'
 import PrettyError from 'pretty-error'
-import { ModuleType } from '@rpgjs/common'
+import { Server } from 'socket.io'
+import { Worker } from "worker_threads"
+import entryPoint from '../entry-point'
 import { RpgServerEngine } from '../server'
 import { api } from './api'
-import { Query } from '../Query'
 
 type ExpressServerOptions = {
     basePath: string,
@@ -59,7 +59,11 @@ export function expressServer(modules: ModuleType[], options: ExpressServerOptio
         let rpgGame: RpgServerEngine
 
         async function start() {
-            rpgGame = await entryPoint(modules, { io, ...options })
+            rpgGame = await entryPoint(modules, { 
+                io, 
+                Worker,
+                ...options 
+            })
             rpgGame.app = app
             rpgGame.start()
             app.use('/api', api(rpgGame))

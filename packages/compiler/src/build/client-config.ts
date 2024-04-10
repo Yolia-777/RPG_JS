@@ -1,31 +1,32 @@
-import { splitVendorChunkPlugin } from 'vite'
-import { resolve, join } from 'path'
-import { VitePWA } from 'vite-plugin-pwa'
-import nodePolyfills from 'rollup-plugin-node-polyfills'
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-import requireTransform from './vite-plugin-require.js';
-import { flagTransform } from './vite-plugin-flag-transform.js';
-import vue from '@vitejs/plugin-vue'
 import react from '@vitejs/plugin-react'
-import { worldTransformPlugin } from './vite-plugin-world-transform.js';
-import fs from 'fs/promises'
+import vue from '@vitejs/plugin-vue'
+import { defaultComposer } from "default-composer"
 import _fs from 'fs'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-import { createRequire } from 'module';
-import { mapExtractPlugin } from './vite-plugin-map-extract.js';
-import { tsxXmlPlugin } from './vite-plugin-tsx-xml.js';
-import { tmxTsxMoverPlugin } from './vite-plugin-tmx-tsx-mover.js';
-import { DevOptions } from '../serve/index.js';
-import { codeInjectorPlugin } from './vite-plugin-code-injector.js';
-import { error, ErrorCodes } from '../utils/log.js';
-import configTomlPlugin from './vite-plugin-config.toml.js'
+import fs from 'fs/promises'
+import { createRequire } from 'module'
+import { join, resolve } from 'path'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
+import { splitVendorChunkPlugin } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa'
+import { DevOptions } from '../serve/index.js'
+import { ErrorCodes, error } from '../utils/log.js'
+import { loadConfigFile } from './load-config-file.js'
 import { createDistFolder, entryPointServer } from './utils.js'
-import cssPlugin from './vite-plugin-css.js';
-import { rpgjsPluginLoader } from './vite-plugin-rpgjs-loader.js';
-import { mapUpdatePlugin } from './vite-plugin-map-update.js';
-import { runtimePlugin } from './vite-plugin-lib.js';
-import { defaultComposer } from "default-composer";
-import { Config, loadConfigFile } from './load-config-file.js';
+import { codeInjectorPlugin } from './vite-plugin-code-injector.js'
+import configTomlPlugin from './vite-plugin-config.toml.js'
+import { crossOriginIsolation } from './vite-plugin-cross-origin-isolation.js'
+import cssPlugin from './vite-plugin-css.js'
+import { flagTransform } from './vite-plugin-flag-transform.js'
+import { runtimePlugin } from './vite-plugin-lib.js'
+import { mapExtractPlugin } from './vite-plugin-map-extract.js'
+import { mapUpdatePlugin } from './vite-plugin-map-update.js'
+import requireTransform from './vite-plugin-require.js'
+import { rpgjsPluginLoader } from './vite-plugin-rpgjs-loader.js'
+import { tmxTsxMoverPlugin } from './vite-plugin-tmx-tsx-mover.js'
+import { tsxXmlPlugin } from './vite-plugin-tsx-xml.js'
+import { worldTransformPlugin } from './vite-plugin-world-transform.js'
 
 const require = createRequire(import.meta.url);
 
@@ -136,6 +137,7 @@ export async function clientBuildConfig(dirname: string, options: ClientBuildCon
                 buffer: true,
             }),
             splitVendorChunkPlugin(),
+            crossOriginIsolation(),
         ]
         if (isBuild && buildOptions.pwaEnabled) {
             plugins.push(
@@ -240,7 +242,8 @@ export async function clientBuildConfig(dirname: string, options: ClientBuildCon
                 options.mode != 'test' ? {
                     buffer: 'rollup-plugin-node-polyfills/polyfills/buffer-es6'
                 } : {}
-            )
+            ),
+            'worker_threads': './worker-thread.js'
         }
 
         for (const [key, value] of Object.entries(aliasPolyfills)) {

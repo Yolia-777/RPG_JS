@@ -1,13 +1,13 @@
-import { SceneMap } from './Scenes/Map';
-import { RpgPlayer } from './Player/Player'
-import { Query } from './Query'
-import { DAMAGE_SKILL, DAMAGE_PHYSIC, DAMAGE_CRITICAL, COEFFICIENT_ELEMENTS } from './presets'
-import { World, WorldClass, Transport } from 'simple-room'
-import { Utils, RpgPlugin, Scheduler, HookServer, RpgCommonGame, DefaultInput } from '@rpgjs/common'
-import { Observable } from 'rxjs';
-import { Tick } from '@rpgjs/types';
+import { DefaultInput, HookServer, RpgCommonGame, RpgPlugin, Scheduler, Utils } from '@rpgjs/common';
 import { Actor, Armor, Class, DatabaseTypes, Item, Skill, State, Weapon } from '@rpgjs/database';
+import { Tick } from '@rpgjs/types';
+import { Observable } from 'rxjs';
+import { Transport, World, WorldClass } from 'simple-room';
+import { RpgPlayer } from './Player/Player';
+import { Query } from './Query';
+import { SceneMap } from './Scenes/Map';
 import { inject } from './inject';
+import { COEFFICIENT_ELEMENTS, DAMAGE_CRITICAL, DAMAGE_PHYSIC, DAMAGE_SKILL } from './presets';
 
 export class RpgServerEngine {
 
@@ -57,6 +57,7 @@ export class RpgServerEngine {
     envs: any = {}
     io: any
     inputOptions: any = {}
+    Worker: any
 
     /**
      * Combat formulas
@@ -68,10 +69,7 @@ export class RpgServerEngine {
         this.io = io
         this.inputOptions = inputOptions
         this.envs = inputOptions.envs || {}
-        if (this.inputOptions.workers) {
-            console.log('workers enabled')
-            this.workers = this.gameEngine.createWorkers(this.inputOptions.workers).load()
-        }
+        this.Worker = inputOptions.Worker
     }
 
     private async _init() {

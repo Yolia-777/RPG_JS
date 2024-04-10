@@ -1,12 +1,17 @@
+import { GameSide, RpgCommonGame } from "@rpgjs/common";
 import { signal } from "canvasengine";
 
-export class GameEngineClient {
+export class GameEngineClient extends RpgCommonGame {
   playerId = signal("");
   session = signal("");
   objects = signal<any[]>([]);
 
   animationX: any;
   animationY: any;
+
+  async initialize() {
+    super.initialize(GameSide.Client, Worker);
+  }
 
   updateObject(obj) {
     const { playerId: id, params, localEvent, paramsChanged, isShape } = obj;
@@ -21,6 +26,7 @@ export class GameEngineClient {
           direction: signal(params.direction),
         })
       );
+      this.addObject(params)
     } else {
       if (paramsChanged.position?.x) {
         if (this.animationX) {
