@@ -9,11 +9,11 @@ export class GameEngineClient extends RpgCommonGame {
   animationX: any;
   animationY: any;
 
-  async initialize() {
+  initialize() {
     super.initialize(GameSide.Client, Worker);
   }
 
-  updateObject(obj) {
+  async updateObject(obj) {
     const { playerId: id, params, localEvent, paramsChanged, isShape } = obj;
     const findObject = this.objects().find((o: any) => o.id == id);
     if (!findObject) {

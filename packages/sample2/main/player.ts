@@ -1,4 +1,4 @@
-import { Components, Move, RpgPlayer, RpgPlayerHooks } from '@rpgjs/server';
+import { Components, RpgPlayer, RpgPlayerHooks } from '@rpgjs/server';
 
 const player: RpgPlayerHooks = {
     onConnected(player: RpgPlayer) {
@@ -22,10 +22,7 @@ const player: RpgPlayerHooks = {
         }
     },
     async onJoinMap(player: RpgPlayer, map) {
-        player.gui('test').open();
-        const event = map.getEventByName('EV-1') as any
-        event.speed = 1
-        event.infiniteMoveRoute([Move.tileRandom()])
+        console.log(player.position.x)
     }
 }
 

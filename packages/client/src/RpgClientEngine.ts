@@ -198,6 +198,9 @@ export class RpgClientEngine {
       this.gameEngine.playerId.set(playerEvent.playerId);
       this.gameEngine.session.set(playerEvent.session);
     });
+    
+
+    await this.gameEngine.createWorker()
 
     World.listen(this.socket).value.subscribe(
       async (val: {

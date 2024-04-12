@@ -1,4 +1,3 @@
-import AbstractObject from './Player';
 export { Control, Direction, Input } from '@rpgjs/types';
 export { transitionColor } from './Color';
 export { DefaultInput } from './DefaultInput';
@@ -10,6 +9,7 @@ export { InjectContext, type InjectInit } from './Inject';
 export * as Logger from './Logger';
 export { RpgCommonMap } from './Map';
 export { RpgModule, loadModules, type ModuleType } from './Module';
+export { PhysicScene } from './PhysicScene';
 export { LiteralDirection, RpgCommonPlayer } from './Player';
 export { HookClient, HookServer, RpgPlugin, type Plugin } from './Plugin';
 export { Scheduler } from './Scheduler';
@@ -20,5 +20,4 @@ export { VirtualGrid } from './VirtualGrid';
 export { RpgCommonWorldMaps } from './WorldMaps';
 export { PrebuiltGui } from './gui/PrebuiltGui';
 export * as TransportIo from './transports/io';
-export { AbstractObject };
 

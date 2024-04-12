@@ -45,7 +45,7 @@ export class Scheduler extends EventEmitter {
         maxFps?: number
         fps?: number,
         delay?: number
-    }) {
+    } = {}) {
         if (options.maxFps) this.maxFps = options.maxFps
         if (options.fps) this.fps = options.fps
         if (options.delay) this.requestedDelay = options.delay
