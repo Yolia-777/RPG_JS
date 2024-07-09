@@ -1,43 +1,41 @@
-import { RpgCommonPlayer, Utils, RpgPlugin, RpgCommonGame, RpgCommonMap, Direction } from '@rpgjs/common'
-import { Room, WorldClass } from 'simple-room'
-import { RpgMap, EventPosOption } from '../Game/Map'
-import { Query } from '../Query'
+import { Direction, RpgCommonGame, RpgCommonMap, RpgCommonPlayer, RpgPlugin, Utils } from '@rpgjs/common'
 import merge from 'lodash.merge'
-import { ItemManager } from './ItemManager'
-import { GoldManager } from './GoldManager'
-import { StateManager } from './StateManager';
-import { SkillManager } from './SkillManager'
-import { ParameterManager } from './ParameterManager';
-import { EffectManager } from './EffectManager';
-import { ClassManager } from './ClassManager';
-import { ElementManager } from './ElementManager'
-import { GuiManager } from './GuiManager'
-import { VariableManager } from './VariableManager'
-import { Frequency, MoveManager, Speed } from './MoveManager'
+import { Room, WorldClass } from 'simple-room'
+import { EventPosOption, RpgMap } from '../Game/Map'
 import { BattleManager } from './BattleManager'
+import { ClassManager } from './ClassManager'
+import { EffectManager } from './EffectManager'
+import { ElementManager } from './ElementManager'
+import { GoldManager } from './GoldManager'
+import { GuiManager } from './GuiManager'
+import { ItemManager } from './ItemManager'
+import { Frequency, MoveManager, Speed } from './MoveManager'
+import { ParameterManager } from './ParameterManager'
+import { SkillManager } from './SkillManager'
+import { StateManager } from './StateManager'
+import { VariableManager } from './VariableManager'
 
+import { CameraOptions, LayoutObject, PositionXY_OptionalZ, SocketEvents, SocketMethods } from '@rpgjs/types'
+import { EventManager, EventMode } from '../Game/EventManager'
+import { RpgTiledWorldMap } from '../Game/WorldMaps'
+import { RpgClassMap } from '../Scenes/Map'
+import { inject } from '../inject'
 import {
-    MAXHP,
-    MAXSP,
-    STR,
-    INT,
-    DEX,
     AGI,
-    MAXHP_CURVE,
-    MAXSP_CURVE,
-    STR_CURVE,
-    INT_CURVE,
+    AGI_CURVE,
+    DEX,
     DEX_CURVE,
-    AGI_CURVE
+    INT,
+    INT_CURVE,
+    MAXHP,
+    MAXHP_CURVE,
+    MAXSP,
+    MAXSP_CURVE,
+    STR,
+    STR_CURVE
 } from '../presets'
 import { RpgServerEngine } from '../server'
-import { RpgClassMap } from '../Scenes/Map'
-import { RpgTiledWorldMap } from '../Game/WorldMaps'
-import { CameraOptions, PositionXY_OptionalZ, SocketEvents, SocketMethods, LayoutObject } from '@rpgjs/types'
-import { ComponentManager } from './ComponentManager'
-import { Subject } from 'rxjs'
-import { EventManager, EventMode } from '../Game/EventManager'
-import { inject } from '../inject'
+import { ComponentManager } from "./ComponentManager"
 
 const {
     isPromise,

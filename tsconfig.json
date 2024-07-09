@@ -31,10 +31,5 @@
             "@rpgjs/*": ["./packages/*"]
          }
     },
-    "include": [
-        "tests/**/*.ts",
-        "specs/plugins/*.ts",
-        "index.d.ts",
-        "packages/compiler/types/*.d.ts",
-    ] 
+    "include": [] 
 }

@@ -1,4 +1,4 @@
-import { InjectContext, HookClient, loadModules, ModuleType } from '@rpgjs/common'
+import { HookClient, InjectContext, ModuleType, loadModules } from '@rpgjs/common'
 import { RpgClientEngine } from './RpgClientEngine'
 import { setInject } from './inject'
 
@@ -96,7 +96,7 @@ interface RpgClientEntryPointOptions {
     envs?: object
 }
 
-export default (modules: ModuleType[], options: RpgClientEntryPointOptions): RpgClientEngine => {
+export default async (modules: ModuleType[], options: RpgClientEntryPointOptions): Promise<RpgClientEngine> => {
 
     if (!options.globalConfig) options.globalConfig = {}
 
@@ -133,17 +133,17 @@ export default (modules: ModuleType[], options: RpgClientEntryPointOptions): Rpg
         onWindowResize: HookClient.WindowResize
     }
 
-    loadModules(modules, {
+    const { scenes } = await loadModules(modules, {
         side: 'client',
         relations: {
             player: relations,
             sceneMap: relationsMap,
             engine: relationsEngine
         }
-    })
+    }) as any
 
     const context = new InjectContext()
     setInject(context)
 
-    return context.inject(RpgClientEngine, [options])
+    return context.inject(RpgClientEngine, [scenes, options])
 }

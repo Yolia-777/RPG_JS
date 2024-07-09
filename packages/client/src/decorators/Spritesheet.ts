@@ -379,11 +379,7 @@ export function Spritesheet(options: SpritesheetImageOptions)
 export function Spritesheet(options: SpritesheetImagesOptions)
 export function Spritesheet(options: SpritesheetImageOptions | SpritesheetImagesOptions) {
     return (target: Function) => {
-        if ('images' in options) target['images'] = options.images
-        if ('id' in options) target['id'] = options.id
-        for (let key in options) {
-            target.prototype[key] = options[key]
-        }
+        target['$decorator'] = options
         return
     }
 }

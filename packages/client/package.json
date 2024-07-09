@@ -2,34 +2,34 @@
   "name": "@rpgjs/client",
   "version": "4.3.0",
   "description": "",
-  "main": "lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "dist/index.mjs",
+  "types": "dist/index.d.mjs",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "tsc && tsc-esm-fix  --target='lib' && npm run build:browser",
-    "build:browser": "RPG_TYPE=rpg npx rpgjs build",
-    "watch": "tsc -w"
+    "dev": "tsup src/index.ts --watch"
   },
   "keywords": [],
   "typesVersions": {
     "*": {
       "react": [
-        "lib/Gui/React.d.ts"
+        "dist/Gui/React.d.ts"
       ]
     }
   },
   "exports": {
-    ".": "./lib/index.js",
-    "./react": "./lib/Gui/React.js"
+    ".": "./dist/index.mjs",
+    "./react": "./dist/Gui/React.js"
   },
   "author": "Samuel Ronce",
   "devDependencies": {
-    "@rpgjs/types": "^4.0.5",
-    "typescript": "^5.3.3"
+    "@rpgjs/types": "workspace:*",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@rpgjs/common": "^4.3.0"
+    "@rpgjs/common": "workspace:*",
+    "@rpgjs/tiled": "workspace:*",
+    "simple-room-client": "^3.0.1"
   }
 }

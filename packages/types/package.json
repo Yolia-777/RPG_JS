@@ -2,20 +2,19 @@
   "name": "@rpgjs/types",
   "version": "4.0.5",
   "description": "",
-  "main": "lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "dist/index.js",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "dev": "tsup src/index.ts --watch"
   },
   "keywords": [],
   "author": "Samuel Ronce",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.0.2"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

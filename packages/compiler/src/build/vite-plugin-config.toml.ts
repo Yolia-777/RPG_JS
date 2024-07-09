@@ -1,13 +1,13 @@
-import fs from 'fs';
-import type { Plugin } from 'vite';
-import sizeOf from 'image-size';
-import type { ClientBuildConfigOptions } from './client-config';
-import { loadGlobalConfig } from './load-global-config.js';
-import { warn } from '../logs/warning.js';
-import { assetsFolder, extractProjectPath, relativePath, toPosix } from './utils.js';
 import dd from 'dedent';
-import { Config } from './load-config-file';
+import fs from 'fs';
+import sizeOf from 'image-size';
 import path from 'path';
+import type { Plugin } from 'vite';
+import { warn } from '../logs/warning.js';
+import type { ClientBuildConfigOptions } from './client-config';
+import { Config } from './load-config-file';
+import { loadGlobalConfig } from './load-global-config.js';
+import { assetsFolder, extractProjectPath, relativePath, toPosix } from './utils.js';
 
 const MODULE_NAME = 'virtual-modules'
 const GLOBAL_CONFIG_CLIENT = 'virtual-config-client'
@@ -222,11 +222,11 @@ export function loadSpriteSheet(directoryName: string, modulePath: string, optio
         else {
             const dimensions = sizeOf(lastImagePath)
             propImagesString = `
-            ${importSprites?.variablesString}.images = {
+            ${importSprites?.variablesString}.$decorator.images = {
                 ${objectString}
             }
-            ${importSprites?.variablesString}.prototype.width = ${dimensions.width}
-            ${importSprites?.variablesString}.prototype.height = ${dimensions.height}
+            ${importSprites?.variablesString}.$decorator.width = ${dimensions.width}
+            ${importSprites?.variablesString}.$decorator.height = ${dimensions.height}
         `
         }
     }
@@ -241,6 +241,18 @@ export function loadSpriteSheet(directoryName: string, modulePath: string, optio
 
 export function loadClientFiles(modulePath: string, options, config: Config) {
     const importSceneMapString = importString(modulePath, 'scene-map', 'sceneMap')
+    
+    const scenes = searchFolderAndTransformToImportString('scenes', modulePath, '.ts', (file, variableName) => {
+        const pathArray = file.split('/')
+        return `
+            ${pathArray[pathArray.length-2]}: ${variableName}
+        `
+    }, {
+        customFilter: (file) => {
+            return file.endsWith('client.ts')
+        }
+    })
+
     const importSpriteString = importString(modulePath, 'sprite')
     const importEngine = importString(modulePath, 'client', 'engine')
     const guiFilesString = searchFolderAndTransformToImportString('gui', modulePath, ['.vue', '.tsx', '.jsx'])
@@ -296,6 +308,7 @@ export function loadClientFiles(modulePath: string, options, config: Config) {
         ${guiFilesString?.importString}
         ${soundFilesString?.importString}
         ${soundStandaloneFilesString?.importString}
+        ${scenes?.importString}
 
         ${importSpritesheets.map(importSpritesheet => importSpritesheet.propImagesString).join('\n')}
         
@@ -303,7 +316,7 @@ export function loadClientFiles(modulePath: string, options, config: Config) {
             spritesheets: [ ${importSpritesheets.map(importSpritesheet => importSpritesheet.variablesString).join(',\n')} ],
             sprite: ${importSpriteString ? 'sprite' : '{}'},
             ${importEngine ? `engine,` : ''}
-            scenes: { ${importSceneMapString ? 'map: sceneMap' : ''} },
+            scenes: { ${scenes?.variablesString} },
             gui: [${guiFilesString?.variablesString}],
             sounds: [${soundFilesString?.variablesString}${hasSounds ? ',' : ''}${soundStandaloneFilesString?.variablesString}]
         })
@@ -500,12 +513,12 @@ export default function configTomlPlugin(options: ClientBuildConfigOptions = {},
                 else {
                     return dd`${headers}
     
-                    document.addEventListener('DOMContentLoaded', function(e) { 
-                        entryPoint(modules, { 
+                    document.addEventListener('DOMContentLoaded', async function(e) { 
+                        (await entryPoint(modules, { 
                             io,
                             globalConfig,
                             envs: ${envsString}
-                        }).start()
+                        })).start()
                     });
                     `
                 }
@@ -550,10 +563,10 @@ export default function configTomlPlugin(options: ClientBuildConfigOptions = {},
                      `
                             :
                             `document.addEventListener('DOMContentLoaded', async function() { 
-                            window.RpgStandalone = await entryPoint(modules, {
-                                globalConfigClient,
-                                globalConfigServer,
-                                envs: ${envsString}
+                                window.RpgStandalone = await entryPoint(modules, {
+                                    globalConfigClient,
+                                    globalConfigServer,
+                                    envs: ${envsString}
                             }).start()
                         })`
                         }
@@ -562,8 +575,10 @@ export default function configTomlPlugin(options: ClientBuildConfigOptions = {},
                 };
             }
             else if (id.endsWith('virtual-server.ts')) {
-                const codeToTransform = dd`
-                import { expressServer } from '@rpgjs/server/express'
+                // hono
+               /* const codeToTransform = dd`
+                import { serve } from '@hono/node-server'
+                import { honoServer } from '@rpgjs/server/hono'
                 import { RpgWorld } from '@rpgjs/server'
                 import * as url from 'url'
                 import modules from './${MODULE_NAME}'
@@ -571,22 +586,32 @@ export default function configTomlPlugin(options: ClientBuildConfigOptions = {},
 
                 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
-                expressServer(modules, {
+                honoServer(modules, {
                     globalConfig,
                     basePath: __dirname,
                     envs: ${envsString}
-                }).then(({ server, game }) => {
+                }).then(({ server, game, app }) => {
+                    serve({
+                        fetch: app.fetch,
+                        port: 8080, 
+                    })
                     if (import.meta['hot']) {
                         import.meta['hot'].on("vite:beforeFullReload", () => {
-                            server.close();
+                           /server.close();
                             RpgWorld.getPlayers().forEach(player => {
                                 player.gameReload();
                             });
                             game.stop();
+                        
                         });
                     }
                 })
-              `;
+              `; */
+                const codeToTransform = dd`
+                    import { RpgServerEngine } from '@rpgjs/server'
+
+                    export default class PartyServer extends RpgServerEngine {}
+                `
                 return codeToTransform
             }
 

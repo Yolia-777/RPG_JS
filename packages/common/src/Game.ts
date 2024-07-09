@@ -1,13 +1,11 @@
-import Utils, { generateUID, isClass } from './Utils'
-import { EventEmitter } from './EventEmitter'
-import { RpgCommonPlayer } from './Player'
-import { constructor, Control, Controls, Direction } from '@rpgjs/types'
-import { RpgPlugin } from './Plugin'
-import { GameWorker } from './Worker'
-import { HitObject } from './Hit'
-import { RpgShape } from './Shape'
 import { TiledObjectClass } from '@rpgjs/tiled'
-import { InjectContext } from './Inject'
+import { Control, Controls, Direction, constructor } from '@rpgjs/types'
+import { EventEmitter } from './EventEmitter'
+import { HitObject } from './Hit'
+import { RpgCommonPlayer } from './Player'
+import { RpgPlugin } from './Plugin'
+import { RpgShape } from './Shape'
+import { generateUID, isClass } from './Utils'
 
 export enum GameSide {
     Server = 'server',
@@ -31,10 +29,6 @@ export class RpgCommonGame extends EventEmitter {
 
     start(world) {
         this.world = world
-    }
-
-    createWorkers(options: any) {
-        return new GameWorker(options)
     }
 
     addObject(_class, playerId?: string) {

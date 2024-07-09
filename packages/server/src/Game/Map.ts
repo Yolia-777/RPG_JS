@@ -1,13 +1,12 @@
-import { RpgCommonMap, Utils, RpgShape, RpgCommonGame, AbstractObject } from '@rpgjs/common'
-import { TiledParserFile, TiledParser, TiledTileset } from '@rpgjs/tiled'
-import { EventData, EventOptions } from '../decorators/event'
-import { RpgPlayer, RpgEvent, RpgClassEvent } from '../Player/Player'
-import { Move } from '../Player/MoveManager'
-import { RpgServerEngine } from '../server'
-import { Observable } from 'rxjs'
+import { AbstractObject, RpgCommonGame, RpgCommonMap, RpgShape, Utils } from '@rpgjs/common'
+import { TiledParser, TiledParserFile, TiledTileset } from '@rpgjs/tiled'
+import { HitBox, MovingHitbox, Position } from '@rpgjs/types'
 import path from 'path'
-import { HitBox, MovingHitbox, PlayerType, Position } from '@rpgjs/types'
+import { Observable } from 'rxjs'
 import { World } from 'simple-room'
+import { RpgClassEvent, RpgEvent, RpgPlayer } from '../Player/Player'
+import { EventData, EventOptions } from '../decorators/event'
+import { RpgServerEngine } from '../server'
 import { EventManager, EventMode } from './EventManager'
 
 export type EventPosOption = {
@@ -24,39 +23,6 @@ export type PlayersList = {
 
 export type EventsList = {
     [playerId: string]: RpgPlayer
-}
-
-class AutoEvent extends RpgEvent {
-    static mode: EventMode
-    static hitbox: any = {}
-
-    onInit() {
-        const { graphic, direction, speed, frequency, move } = this.properties
-        if (graphic) {
-            this.setGraphic(graphic)
-        }
-        if (direction) {
-            this.changeDirection(direction)
-        }
-        if (speed) {
-            this.speed = speed
-        }
-        if (frequency) {
-            this.frequency = frequency
-        }
-        if (move == 'random') {
-            this.infiniteMoveRoute([Move.tileRandom()])
-        }
-    }
-
-    async onAction(player: RpgPlayer) {
-        const { text } = this.properties
-        if (text) {
-            await player.showText(text, {
-                talkWith: this
-            })
-        }
-    }
 }
 
 export class RpgMap extends RpgCommonMap {
@@ -275,29 +241,6 @@ export class RpgMap extends RpgCommonMap {
             this.createDynamicEvent(events)
         }
 
-    }
-
-    // TODO
-    autoLoadEvent() {
-        this.getShapes().forEach(shape => {
-            const { properties } = shape
-            const { x, y, pos, w, h } = shape.hitbox
-            if (shape.isEvent() && !this.events[shape.name]) {
-                const mode = properties.mode || EventMode.Shared
-                AutoEvent.prototype['_name'] = shape.name
-                AutoEvent.mode = mode
-                AutoEvent.hitbox = {
-                    width: 32,
-                    height: 16
-                }
-                const event = this.createEvent({
-                    x,
-                    y,
-                    event: AutoEvent
-                }, mode, shape)
-                if (event) this.events[shape.name] = event
-            }
-        })
     }
 
     /**
